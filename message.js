@@ -16,7 +16,7 @@ const MessageSchema = new Schema({
     countMessagePerDay: {
         type: Number,
         default: 0
-    }
+    },
     date: {
         type: Date,
         default: Date.now
