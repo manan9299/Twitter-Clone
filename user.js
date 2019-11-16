@@ -18,11 +18,11 @@ exports.sendMessage = (req, res) => {
 exports.viewMessage = (req, res) => {
     console.log("Viewing messages backend API");
 
-    Message.find({ receiver: req.session.ID }, (err, reply) => {
+    Message.find({ receiver: req.session.ID }, (err, msg) => {
         if (err) {
             throw err;
-        } else if (reply) {
-            res.status(200).send(reply);
+        } else if (msg) {
+            res.status(200).send(msg);
         } else {
             res.status(404).send("No messages found in inbox!");
         }
