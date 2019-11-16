@@ -1,4 +1,4 @@
-const { sendMessage, viewMessage  } = require('./routes/user');
+const { sendMessage, receiveMessage  } = require('./routes/user');
 
-app.get('/api/user/viewMessage', viewMessage);
+app.get('/api/user/receiveMessage', receiveMessage);
 app.post('/api/user/sendMessage', sendMessage);

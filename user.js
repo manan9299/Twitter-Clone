@@ -14,9 +14,9 @@ exports.sendMessage = (req, res) => {
         .catch(err => res.status(400).json(err))
 };
 
-//fetch all messages sent to current user
-exports.viewMessage = (req, res) => {
-    console.log("Viewing messages backend API");
+//fetch all messages received by current user
+exports.receiveMessage = (req, res) => {
+    console.log("Receiving messages backend API");
 
     Message.find({ receiver: req.session.ID }, (err, msg) => {
         if (err) {
