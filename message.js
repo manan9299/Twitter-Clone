@@ -8,11 +8,15 @@ const MessageSchema = new Schema({
     receiver: {
         type: String
     },
-    message: {
+    content: {
         type: String,
         trim: true,
         default: ""
     },
+    countMessagePerDay: {
+        type: Number,
+        default: 0
+    }
     date: {
         type: Date,
         default: Date.now
