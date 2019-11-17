@@ -1,0 +1,4 @@
+{
+    "mongoURI" : "mongodb+srv://dharmang007:Abcd007@grubhub-sdk94.mongodb.net/test?retryWrites=true&w=majority",
+    "jwtSecretToken": "dharmang"
+}
