@@ -39,18 +39,19 @@ router.post('/create-user',[
        }
        try{
             
-            //const salt = await bcrpyt.genSalt(10);
-            //password = await bcrpyt.hash(password,salt);
+            const salt = await bcrpyt.genSalt(10);
+            let password = await bcrpyt.hash(req.body.password,salt);
             var query = `INSERT INTO users (username,first_name, last_name, city,zip,description,profile_image, email, password) VALUES (
-                '${req.body.username}', '${req.body.first_name}', '${req.body.last_name}', '${req.body.city}','${req.body.zip}','${req.body.description}','${req.body.profile_image}','${req.body.email}','${req.body.password}');`;
+                '${req.body.username}', '${req.body.first_name}', '${req.body.last_name}', '${req.body.city}','${req.body.zip}','${req.body.description}','${req.body.profile_image}','${req.body.email}','${password}');`;
             
             sqlConnection.query(query,(err, rows) => {
                 if(!err){
-                    console.log(rows);
+                    
                     var getUserQuery = `SELECT * FROM users WHERE username = '${req.body.username}'`;
                     let userData = null;
                     sqlConnection.query(getUserQuery,(err,rows,fields)=>{
                         userData = rows;
+                        console.log(rows);
                     })
                     res.json(userData);
                 }
