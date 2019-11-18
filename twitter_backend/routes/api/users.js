@@ -62,7 +62,7 @@ router.post('/create-user',[
        }    
 });
 
-router.post('/tweet',async (req,res)=>{
+router.post('/tweet',async (req,res)=>{    
     try{
         
         let {username,content} = req.body;
@@ -78,11 +78,10 @@ router.post('/tweet',async (req,res)=>{
         let likedBy = [];
         let replies = [];
         let refTweetId = "";
-
         tweetObjofUser.tweets.push({timestamp,content,image,likeCount,replyCount,likedBy,replies,refTweetId});
         tweetObjofUser.save();
-        console.log("Working");
-        res.status(200);     
+        res.status(200);  
+        console.log("Working");   
     }catch(err){
         console.error(err);
         res.status(500).send("Server Error");
