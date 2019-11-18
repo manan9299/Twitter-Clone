@@ -7,14 +7,12 @@
 const express = require('express');
 const sqlConnection = require('../../config/sqlConnection');
 const bcrpyt = require('bcryptjs');
-const multer = require('multer');
+const jwt = require('jsonwebtoken');
+const config = require('config');
 const path = require('path');
 var { check, validationResult } = require('express-validator');
-
 /*#endregion*/ 
 
-
-//Using Multer object to save the Image Files
 const router = express.Router();
 
 /**
@@ -31,11 +29,9 @@ router.post('/create-user',[
     ],async (req,res)=>{
        const err = validationResult(req);
        if(!err.isEmpty()){
-           console.log(err.array());
-           console.log("Error Found");
-        return res.status(400).json({
-            errors:err.array()
-        });
+            return res.status(400).json({
+                errors:err.array()
+            });
        }
        try{
             
@@ -44,6 +40,8 @@ router.post('/create-user',[
             var query = `INSERT INTO users (username,first_name, last_name, city,zip,description,profile_image, email, password) VALUES (
                 '${req.body.username}', '${req.body.first_name}', '${req.body.last_name}', '${req.body.city}','${req.body.zip}','${req.body.description}','${req.body.profile_image}','${req.body.email}','${password}');`;
             
+            
+            sqlConnection.connect();
             sqlConnection.query(query,(err, rows) => {
                 if(!err){
                     
@@ -53,12 +51,16 @@ router.post('/create-user',[
                         userData = rows;
                         console.log(rows);
                     })
+                    console.log("HELLO");
                     res.json(userData);
                 }
                 else{
                     res.json(err);
                 }
             });
+            sqlConnection.end();
+
+
        }catch(err){
          
          console.error(err);
