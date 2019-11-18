@@ -5,10 +5,7 @@
 const mongoose = require("mongoose");
 const config = require('config');
 const db = config.get('mongoURI');
-//const ObjectID = require('mongodb').ObjectID;
-//const dbName = "grubhub";
-//const dbPort = "27017";
-//const url = "mongodb://localhost:"+dbPort;
+
 
 // NOTE: poolSize is for connection pooling
 const dbOptions = {
@@ -33,6 +30,7 @@ const mongodbConnection = async () => {
         console.log('Database Connected!')
         
     }catch(error){
+        console.error(error);
         console.log('Database connection failed!');
         process.exit(1);
     }
