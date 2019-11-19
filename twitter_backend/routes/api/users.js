@@ -62,31 +62,36 @@ router.post('/create-user',[
        }    
 });
 
-router.post('/tweet',async (req,res)=>{    
-    try{
-        
-        let {username,content} = req.body;
-        let tweetObjofUser = await Tweets.findOne({"username": username});
-        if(!tweetObjofUser){
-            // Create a new tweet object
-            tweetObjofUser = new Tweets({username})
+router.post('/tweet',async (req,res)=>{
+
+        try{
+
+            let newTweet = {
+                        content : req.body.content,
+                        image: "",
+                        likeCount:0,
+                        replyCount:0,
+                        likedBy:[],
+                        replies:[],
+                        refTweetId : "",
+                        timestamp: Date.now()
+                    };
+    
+            let tweetObj = await Tweets.findOne({username:req.body.username});
+            if(!tweetObj){
+                tweetObj = new Tweets({username:req.body.username,tweets:[]});
+                
+            }
+            tweetObj.tweets.push(newTweet);
+            tweetObj.save();
+            res.status(200).json(tweetObj);
+        }catch(err){
+            console.error(err);
+            res.status(500).send("Server Error");
         }
-        let timestamp = Date.now();
-        let likeCount = 0;
-        let replyCount = 0;
-        let image = "";
-        let likedBy = [];
-        let replies = [];
-        let refTweetId = "";
-        tweetObjofUser.tweets.push({timestamp,content,image,likeCount,replyCount,likedBy,replies,refTweetId});
-        tweetObjofUser.save();
-        res.status(200);  
-        console.log("Working");   
-    }catch(err){
-        console.error(err);
-        res.status(500).send("Server Error");
-    }
-    });
+        
+        });
+        
 
 router.post('/login',[
     check('email','Please Enter your Email').not().isEmpty(),

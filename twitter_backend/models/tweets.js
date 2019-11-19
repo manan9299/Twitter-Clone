@@ -12,34 +12,29 @@ const mongoose = require('mongoose');
 const TweetsSchema = new mongoose.Schema({
   username:{
     type: String,
-    required: true
+    required: true,
+    unique:true
   },
   tweets:[
-    {
-        timestamp:{
-            type : mongoose.Schema.Types.Date
-        },
+    {       
         content:{type:String},
         image: {type:String},
         likeCount: {type:Number},
         replyCount: {type:Number},
-        likedBy:[
-            {
-                _id:{type:mongoose.Schema.Types.ObjectId},
-                type:String
-            }
-        ],
+        likedBy:[{type:String}],
         replies:[
-            {
-                _id:{type:mongoose.Schema.Types.ObjectId},
-                reply_username:{type: String},
-                reply_content:{type:String},
-                reply_timestamp:{type : mongoose.Schema.Types.Date},
-            }
+          {
+            reply_username:{type:String},
+            reply_content:{type:String},
+            timestamp:{type:mongoose.Schema.Types.Date}
+          }
         ],
         refTweetId:{
             type:String
-        }
+        },
+        timestamp:{
+            type : mongoose.Schema.Types.Date
+        },
     }
   ]
 
