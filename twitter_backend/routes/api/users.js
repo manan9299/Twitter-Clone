@@ -9,6 +9,12 @@ const sqlConnection = require('../../config/sqlConnection');
 const Tweets =require("../../models/tweets");
 const bcrypt = require("bcryptjs");
 var { check, validationResult } = require('express-validator');
+<<<<<<< Updated upstream
+=======
+const kafka = require('../kafka/client')
+
+
+>>>>>>> Stashed changes
 /*#endregion*/ 
 
 const router = express.Router();
@@ -25,6 +31,7 @@ router.post('/create-user',[
     check('city','Enter name of your city').not().isEmpty(),
     check('password','The length of the password must be 8 or more characters.').isLength({min:8}),
     ],async (req,res)=>{
+<<<<<<< Updated upstream
        const err = validationResult(req);
        if(!err.isEmpty()){
             return res.status(400).json({
@@ -60,6 +67,20 @@ router.post('/create-user',[
          console.error(err);
           res.status(500).send("Server error!");
        }    
+=======
+     kafka.make_request('users',req.body,(err,results)=>
+        {
+            
+          if(err){
+              res.json(err);
+                  }
+           else{
+              res.json(results);
+           }
+        });
+            
+        
+>>>>>>> Stashed changes
 });
 
 router.post('/tweet',async (req,res)=>{
