@@ -9,7 +9,13 @@ const sqlConnection = require('../../config/sqlConnection');
 const Tweets =require("../../models/tweets");
 const bcrypt = require("bcryptjs");
 var { check, validationResult } = require('express-validator');
+var redis = require('redis');
 /*#endregion*/ 
+const redisClient = redis.createClient(6379);
+
+redisClient.on('connect', () => {
+    console.log("Connected to redis");
+});
 
 const router = express.Router();
 
@@ -91,6 +97,46 @@ router.post('/tweet',async (req,res)=>{
         }
         
         });
+
+router.get('/getPastTweets', (req, res)=>{
+
+    try {
+        let reqUserName = req.body.username;
+        let userTweets = reqUserName + ':tweets';
+        console.log("user tweets ==> " + userTweets);
+
+        redisClient.get(userTweets, async (err, tweets) => {
+            if (tweets) {
+                console.log(" ============== returning from redis cache =======");
+                res.json({
+                    "tweets" : tweets
+                })
+            } else {
+                console.log(" ============== fetching tweets and writing to cache =======");
+                let tweetObj = await Tweets.findOne({username: reqUserName}, {tweets : 1});
+                let tweets = tweetObj.tweets;
+                redisClient.set(userTweets, JSON.stringify(tweets), 'EX', 3600);
+                // let deleted = redisClient.del("dddd");
+                // console.log(deleted);
+                
+                if (tweetObj){
+                    res.json({
+                        "tweets" : JSON.stringify(tweets)
+                    });
+                } else {
+                    res.json({
+                        "tweets" : []
+                    })
+                }
+            }
+        });
+        
+    } catch (err){
+        console.error(err);
+        res.status(500).send("Server Error");
+    }
+    
+});
         
 
 router.post('/login',[
