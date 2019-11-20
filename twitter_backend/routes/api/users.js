@@ -50,10 +50,10 @@ router.post('/tweet',async (req,res)=>{
         {
             
           if(err){
-              res.json(err);
+            res.status(500).send("Server Error");
                   }
            else{
-              res.json(results);
+            res.status(200).json(results);
            }
         });
      
