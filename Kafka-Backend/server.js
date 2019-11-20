@@ -2,7 +2,7 @@ var connection =  new require('./kafka/Connection');
 //topics files
 //var signin = require('./services/signin.js');
 // var Books = require('./services/books.js');
-var getprofile = require('./services/getprofile.js')
+var posttweet = require('./services/posttweet.js')
 var users = require('./services/users.js')
 
 function handleTopicRequest(topic_name,fname){
@@ -37,5 +37,5 @@ function handleTopicRequest(topic_name,fname){
 // Add your TOPICs here
 //first argument is topic name
 //second argument is a function that will handle this topic request
-handleTopicRequest("getprofile",getprofile);
+handleTopicRequest("posttweet",posttweet);
 handleTopicRequest('users',users);
