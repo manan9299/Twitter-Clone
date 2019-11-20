@@ -116,8 +116,8 @@ router.get('/getPastTweets', (req, res)=>{
                 let tweetObj = await Tweets.findOne({username: reqUserName}, {tweets : 1});
                 let tweets = tweetObj.tweets;
                 redisClient.set(userTweets, JSON.stringify(tweets), 'EX', 3600);
-                // let deleted = redisClient.del("dddd");
-                // console.log(deleted);
+                let deleted = redisClient.del("userTweets");
+                console.log(deleted);
                 
                 if (tweetObj){
                     res.json({
