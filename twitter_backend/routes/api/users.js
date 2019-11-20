@@ -10,6 +10,7 @@ const bcrpyt = require('bcryptjs');
 const multer = require('multer');
 const path = require('path');
 var { check, validationResult } = require('express-validator');
+const kafka = require('../kafka/client')
 
 /*#endregion*/ 
 
@@ -29,40 +30,85 @@ router.post('/create-user',[
     check('city','Enter name of your city').not().isEmpty(),
     check('password','The length of the password must be 8 or more characters.').isLength({min:8}),
     ],async (req,res)=>{
-       const err = validationResult(req);
-       if(!err.isEmpty()){
-           console.log(err.array());
-           console.log("Error Found");
-        return res.status(400).json({
-            errors:err.array()
+     kafka.make_request('users',req.body,(err,results)=>
+        {
+            
+          if(err){
+              res.json(err);
+                  }
+           else{
+              res.json(results);
+           }
         });
-       }
-       try{
             
-            const salt = await bcrpyt.genSalt(10);
-            let password = await bcrpyt.hash(req.body.password,salt);
-            var query = `INSERT INTO users (username,first_name, last_name, city,zip,description,profile_image, email, password) VALUES (
-                '${req.body.username}', '${req.body.first_name}', '${req.body.last_name}', '${req.body.city}','${req.body.zip}','${req.body.description}','${req.body.profile_image}','${req.body.email}','${password}');`;
-            
-            sqlConnection.query(query,(err, rows) => {
-                if(!err){
-                    
-                    var getUserQuery = `SELECT * FROM users WHERE username = '${req.body.username}'`;
-                    let userData = null;
-                    sqlConnection.query(getUserQuery,(err,rows,fields)=>{
-                        userData = rows;
-                        console.log(rows);
-                    })
-                    res.json(userData);
-                }
-                else{
-                    res.json(err);
-                }
-            });
-       }catch(err){
-         
-         console.error(err);
-          res.status(500).send("Server error!");
-       }    
+        
 });
+
+router.post('/tweet',async (req,res)=>{
+
+   kafka.make_request('posttweet',req.body,(err,results)=>
+        {
+            
+          if(err){
+              res.json(err);
+                  }
+           else{
+              res.json(results);
+           }
+        });
+     
+   });
+   
+
+router.post('/login',[
+check('email','Please Enter your Email').not().isEmpty(),
+check('email','Your email is valid. Please check the format of your email.').isEmail(),
+check('password','Please password your Email').not().isEmpty(),
+],
+async (req,res)=>{
+   const err = validationResult(req);    
+   if(!err.isEmpty()){
+    return res.status(400).json({
+        errors:err.array()
+    });
+   }
+   
+   try{
+        // Step 1 : De-Struct the request body 
+        
+        var query = `SELECT * FROM users WHERE email = '${req.body.email}' AND password = '${req.body.password}';`;
+        //sqlConnection.connect();
+        
+        sqlConnection.query(query, async (err, row , fields) =>  {
+            if(err){ 
+                console.error("Database error");
+                res.sendStatus(500);              
+            }
+            else if(row){
+ 
+                //const matches = await bcrypt.compare(row[0].password,req.body.password);
+                //if(){
+                    //get all the details of that user
+                    res.json(row[0]);
+                    //return row[0];
+                //}
+                
+ 
+            }  
+            else{
+                res.send("Invalid Credentials!");
+            }
+        });
+        //console.log(result);
+        //sqlConnection.end();                
+   
+    }catch(err){
+ 
+        console.error(err);
+        res.sendStatus(500);
+   }
+  
+});
+
+
 module.exports = router;
