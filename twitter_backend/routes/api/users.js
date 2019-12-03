@@ -100,9 +100,6 @@ router.post('/tweet',async (req,res)=>{
 
 router.get('/getAllTweets/:start',async (req,res)=>{
     try{
-        
-        console.log(req.params);
-        console.log(req.query);
         let startIndex  = parseInt(req.params.start);
         let tweets = await Tweets.find({}).skip(startIndex).limit(10);
         res.json(tweets);
@@ -113,19 +110,14 @@ router.get('/getAllTweets/:start',async (req,res)=>{
 });
 
 
-
-router.get('/:username/getTweets', async (req, res)=>{
+router.get('/:username/getTweets/:start', async (req, res)=>{
 
     try {
         let reqUserName = req.params.username;
-        let userTweets = reqUserName + ':tweets';
-        console.log("user tweets ==> " + userTweets);
-        let tweetObj = await Tweets.findOne({username: reqUserName}).select('tweets');
-        if(tweetObj){
-            res.json(tweetObj);
-        }else{
-            res.json({});
-        }
+        let startIndex = req.params.start
+        let userObj = await Tweets.findOne({ username : reqUserName})
+        let userTweets = await userObj.tweets.slice(startIndex,startIndex+10);
+        res.json(userTweets);
 /*
         redisClient.get(userTweets, async (err, tweets) => {
             if (tweets) {

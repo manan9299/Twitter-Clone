@@ -1,31 +1,33 @@
 import React, { Component, useEffect, useState } from "react";
 import Navbar from './navbar';
 import "../css/home.css";
-import {Redirect}  from 'react-router';
+import {Link} from 'react-router-dom';
 import defaultValues from "../constants/defaultValues";
-import { Col,Row,FormGroup,Form,Label, Input, Card, Button, CardImg, CardTitle, CardText, CardDeck,
+import {Card, Button, CardImg, CardTitle, CardText, CardDeck,
     CardSubtitle, CardBody, Pagination, PaginationItem, PaginationLink
 } from 'reactstrap';
 import Axios from "axios";
 import InfiniteScroll from 'react-infinite-scroller'
 
 class Home extends Component{
+    
     constructor(props){
         super(props)
         this.state = {
+            username : "batchUser1", // TODO:: change this later 
             tweetsLoaded: [],
             tweetsLoadedCnt:0,
             isLoading: true,
             cursor: 0
           };
-          this.getTweets = this.getTweets.bind(this);
+          this.getUserTweets = this.getUserTweets.bind(this);
           this.scrollDownEvent = this.scrollDownEvent.bind(this);
     }
     
 
     componentDidMount(){
         //this.loadTweets(); 
-        this.getTweets();
+        this.getUserTweets();
         
     }
     componentWillMount(){
@@ -33,7 +35,7 @@ class Home extends Component{
             if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
                 console.log("you're at the bottom of the page");
                 //show loading spinner and make fetch request to api
-                this.getTweets();
+                this.getUserTweets();
              }
         });
     }
@@ -42,21 +44,21 @@ class Home extends Component{
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
             console.log("you're at the bottom of the page");
             //show loading spinner and make fetch request to api
-            this.getTweets();
+            this.getUserTweets();
          }
     }
 
     
-    getTweets(){
+    getUserTweets(){
         const data = {
             start : this.state.tweetsLoadedCnt
         }
         console.log(data.start);
-        Axios.get(defaultValues.serverURI+"/users/getAllTweets/"+this.state.tweetsLoadedCnt.toString(),)
+        
+        Axios.get(defaultValues.serverURI+"/users/batchUser1/getTweets/"+this.state.tweetsLoadedCnt.toString(),)
         .then((res)=>{
-            
+            console.log(res)
             if(res){
-
                 this.setState({
                     tweetsLoaded : [...this.state.tweetsLoaded,...res.data],
                     tweetsLoadedCnt : this.state.tweetsLoadedCnt + 10
@@ -75,7 +77,7 @@ class Home extends Component{
             tweetsLoaded,
             tweetsLoadedCnt
         } = this.state;
-
+        console.log(tweetsLoaded);
         return(    
                 <div className="container">
                     <div>
@@ -95,15 +97,15 @@ class Home extends Component{
                             }
                         >
                             {tweetsLoaded.map(tweetObj => (
-                                <Card bottom width="100%">
+                                <Card id="tweet" bottom width="100%">
                                     <CardBody>
-                                    <CardTitle>{tweetObj.username}</CardTitle>
-                                    <CardText></CardText>
+                                    <CardTitle ><Link to="/DisplayProfile" username={this.state.username}>{this.state.username}</Link></CardTitle>
+                                    <CardText>{tweetObj.content}</CardText>
                                     <CardText>
-                                        <small className="text-muted">Last updated 3 mins ago</small>
+                                        <small className="text-muted"></small>
                                     </CardText>
                                     </CardBody>
-                                    <CardImg bottom width="100%"  alt="Card image cap" />
+                                    <img bottom  src="/images/Madtitan.jpg" width="500" height="300" alt="Card image cap" />
                                 </Card>
                             ))}
                 
