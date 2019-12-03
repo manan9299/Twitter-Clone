@@ -18,13 +18,8 @@ const CommentTweet = () => {
     const [update, setUpdate] = useState(false);
     const [tweets, setTweets] = useState('');
     const [username, setUsername] = useState('');
-    //const [chosenEmoji, setChosenEmoji] = useState(null);
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
-
-    /*const onEmojiClick = (e, emojiObject) => {
-        setChosenEmoji(emojiObject);
-    }*/
 
     useEffect(() => {
         axios.get('/getTweets')
@@ -42,7 +37,7 @@ const CommentTweet = () => {
     const handleReplyTweet = async (e) => {
         e.preventDefault();
         /*
-        axios.post('/replyTweet', { content: tweet, imageUrl: img })
+        axios.post('/replyTweet', { content: tweets})
             .then(res => {
                 //setShow(false);
             }).catch((err) => {
@@ -50,8 +45,8 @@ const CommentTweet = () => {
             });*/
     }
 
-    const handleUpdateLikes = () => {
-        axios.post('/updateLikes', { likes: likes })
+    const handleUpdateLikes = (num) => {
+        axios.post('/updateLikes', { likes: likes + num })
             .then(res => {
                 console.log(res.data);
             }).catch((err) => {
@@ -63,11 +58,11 @@ const CommentTweet = () => {
         if (!update) {
             setLikes(likes + 1);
             setUpdate(true);
-            handleUpdateLikes();
+            handleUpdateLikes(1);
         } else {
             setLikes(likes - 1);
             setUpdate(false);
-            handleUpdateLikes();
+            handleUpdateLikes(-1);
         }
     }
 

@@ -26,12 +26,9 @@ const PostTweet = () => {
     //useState(0) will be replaced with existing likes from db
     const [likes, setLikes] = useState(0);
     const [update, setUpdate] = useState(false);
-    const [tweets, setTweets] = useState('');
-    const [username, setUsername] = useState('');
     //const [chosenEmoji, setChosenEmoji] = useState(null);
     const handleShow = () => setShow(true);
     const handleClose = () => setShow(false);
-
 
     /*const onEmojiClick = (e, emojiObject) => {
         setChosenEmoji(emojiObject);
@@ -42,7 +39,7 @@ const PostTweet = () => {
         e.preventDefault();
         axios.post('/postTweet', { content: tweet, imageUrl: img })
             .then(res => {
-                //setShow(false);
+                setShow(false);
             }).catch((err) => {
                 console.log(err);
             });
