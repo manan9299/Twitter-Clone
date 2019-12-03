@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 mongoose.Promise = global.Promise;
 //mongoose.connect('mongodb://localhost:27017/HomeAway');
-mongoose.connect("mongodb+srv://venky:Sunny@cluster0-bqswl.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect("mongodb+srv://venkatesh:Sunny@test-uolh4.mongodb.net/test?retryWrites=true&w=majority", { useNewUrlParser: true, useUnifiedTopology: true });
 var Userdetails = mongoose.model('Userdetails', {
     'username' : {
         type: String

@@ -1,7 +1,6 @@
 const express = require('express');
 const app = express.Router();
 var Model = require('../DatabaseConnection');
-var mongooseTypes = require('mongoose').Types;
 
 
 const bcrypt = require('bcrypt-nodejs');
@@ -10,10 +9,9 @@ const bcrypt = require('bcrypt-nodejs');
 app.post('/customerSignup', (req, res) => {
     console.log("In customer signup");
     console.log(req.body);
-    const profileId = mongooseTypes.ObjectId();
     
     Model.Userdetails.findOne({
-        'Username': req.body.userName
+        'username': req.body.userName
     }, (err, user) => {
     
         if (err) {

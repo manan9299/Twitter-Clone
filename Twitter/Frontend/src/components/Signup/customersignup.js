@@ -45,7 +45,7 @@ submitSignup = (details) => {
     console.log("Inside submit Signup",details);
     const data = {
         userName: details.userName,
-        Fistname: details.Firstname,
+        Firstname: details.Firstname,
         Lastname: details.Lastname,
         userEmail: details.email,
         userPassword :  details.password,

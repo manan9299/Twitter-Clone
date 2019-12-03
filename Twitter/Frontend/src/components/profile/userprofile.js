@@ -5,43 +5,41 @@ import * as Yup from "yup";
 import axios from 'axios';
 import '../../App.css';
 import rootUrl from "../config/settings";
-import { Redirect } from 'react-router';
-import cookie from 'react-cookies';
 import {getProfile } from '../../actions';
 import { connect } from 'react-redux';
 import {updateProfile} from '../../actions';
 
 
 
-const phoneRegExp = /^(\+\d{1,2}\s)?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/
 const zipRegEx = /^[0-9]{5}(?:-[0-9]{4})?$/
 
 const SignUpSchema = Yup.object().shape({
     userName: Yup.string()
         .required("userName is required"),
-    Fullname: Yup.string()
+    Firstname: Yup.string()
         .required("name is required"),
+    Lastname: Yup.string()
+    .required("name is required"),
     email: Yup.string()
         .email("Invalid email address format")
         .required("Email is required"),
     password: Yup.string()
         .min(8, "Password must be 8 characters at minimum")
         .required("Password is required"),
-    userPhone: Yup.string()
-        .matches(phoneRegExp, 'Phone number is not valid')
-        .required("Phone number is required"),
     userAddress: Yup.string()
         .required("Address is required"),
     Description: Yup.string()
         .required("Description is required"),
-    userZip: Yup.string()
+    Zip: Yup.string()
     .matches(zipRegEx, "Zip code is not valid")
     .required("ZIP code is required")
    
 })
+
 var colors = {
     color: "balck"
 }
+
 
 class UserProfile extends Component {
     constructor(props) {
@@ -52,9 +50,8 @@ class UserProfile extends Component {
             Lastname:'Sample name',
             userEmail: "sample@abc.com",
             password: '********',
-            userAdr: "Sample Address",
-            userPhone: "5555555555",
-            Description: "I'm in USA",
+            userAddress:"12345",
+            Description: "Add Description",
             Zip:"99999",
             profile_image: "",
             Created:"",
@@ -88,7 +85,7 @@ class UserProfile extends Component {
                         userName: response.data.username,
                         password: response.data.password,
                         Zip: response.data.zip,
-                        userAdr: response.data.city,
+                        userAddress: response.data.city,
                         Description: response.data.description,
                         Created: response.data.created.slice(4,15),
                         profile_image: response.data.profile_image,
@@ -156,7 +153,7 @@ class UserProfile extends Component {
     onsubmit = (details) => {
         console.log("Inside profile update", details);
         const data = {
-            userPassword: details.password,
+            Password: details.password,
             userName: details.userName,
             Firstname: details.Firstname,
             Lastname: details.Lastname,
@@ -166,7 +163,7 @@ class UserProfile extends Component {
             userImage: this.state.profile_image,
             userEmail: localStorage.getItem('userEmail')
         }
-        const data123=data.Fullname+'('+data.userName+')'
+        const data123=data.Firstname+data.Lastname+'('+data.userName+')'
         localStorage.setItem("userName", data123)
         //set the with credentials to true
         axios.defaults.withCredentials = true;
@@ -226,9 +223,9 @@ class UserProfile extends Component {
                                 Firstname: this.state.Firstname,
                                 Lastname: this.state.Lastname,
                                 password: this.state.password,
-                                Zip: this.state.Zip,
-                                userAddress: this.state.userAdr,
+                                userAddress: this.state.userAddress,
                                 Description: this.state.Description,
+                                Zip:this.state.Zip,
                                 Created:this.state.Created
                             }}
                         validationSchema={SignUpSchema}
@@ -283,6 +280,7 @@ class UserProfile extends Component {
                                         className="invalid-feedback"
                                     />
                                 </div>
+
                                 <div className="form-group text-left col-sm-5">
                                     <br />
                                     <label htmlFor="Lastname">Lastname</label>
@@ -345,34 +343,12 @@ class UserProfile extends Component {
                                     />
                                 </div>
 
-                                <div className="form-group text-left col-sm-5">
-                                    <label htmlFor="Zip">Zip</label>
-                                    <Field
-                                        type="text"
-                                        name="Zip"
-                                        //   onChange={this.userPhoneChangeHandler}
-                                        //   value={this.state.userPhone}
-                                        disabled
-                                        //   autofocus="true"
-                                        className={`form-control ${
-                                            touched.Zip && errors.Zip ? "is-invalid" : ""
-                                            }`}
-                                    />
-                                    <ErrorMessage
-                                        component="div"
-                                        name="Zip"
-                                        align="text-left"
-                                        className="invalid-feedback"
-                                    />
-                                </div>
-
                                 <div className="form-group text-left col-sm-5" id="userAddress">
                                     <label htmlFor="userAddress">City</label>
                                     <Field
                                         type="text"
                                         name="userAddress"
-                                        //   onChange={this.userAdrChangeHandler}
-                                        //   value={this.state.userAdr}
+                                       
                                         disabled
                                         //   autofocus="true"
                                         className={`form-control ${
@@ -391,8 +367,7 @@ class UserProfile extends Component {
                                     <Field
                                         type="text"
                                         name="Description"
-                                        //   onChange={this.userAdrChangeHandler}
-                                        //   value={this.state.userAdr}
+                                     
                                         disabled
                                         //   autofocus="true"
                                         className={`form-control ${
@@ -408,12 +383,31 @@ class UserProfile extends Component {
                                 </div>
 
                                 <div className="form-group text-left col-sm-5">
+                                    <label htmlFor="Zip">Zip</label>
+                                    <Field
+                                        type="text"
+                                        name="Zip"
+                                        
+                                        disabled
+                                        //   autofocus="true"
+                                        className={`form-control ${
+                                            touched.Zip && errors.Zip ? "is-invalid" : ""
+                                            }`}
+                                    />
+                                    <ErrorMessage
+                                        component="div"
+                                        name="Zip"
+                                        align="text-left"
+                                        className="invalid-feedback"
+                                    />
+                                </div>
+
+                                <div className="form-group text-left col-sm-5">
                                     <label htmlFor="Created">Member Since</label>
                                     <Field
                                         type="text"
                                         name="Created"
-                                        //   onChange={this.userAdrChangeHandler}
-                                        //   value={this.state.userAdr}
+                                        
                                         disabled
                                         //   autofocus="true"
                                         className={`form-control ${
@@ -430,8 +424,8 @@ class UserProfile extends Component {
 
                                 <br />
                                 <div className="form-group">
-                                    <label htmlFor="profile_image"><strong>Profile Image : </strong></label><br />
-                                    <input type="file" name="profile_image" id="profile_image" className="btn btn-sm photo-upload-btn" onChange={this.handleChange} />
+                                    <label htmlFor="ProfileImage"><strong>Profile Image : </strong></label><br />
+                                    <input type="file" name="ProfileImage" id="ProfileImage" className="btn btn-sm photo-upload-btn" onChange={this.handleChange} />
                                 </div>
                                 <div className="formholder">
                                     <span>

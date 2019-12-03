@@ -33,10 +33,9 @@ app.post("/getprofile", (req, res) => {
   // if (req.body.userEmail) {
 
   if (req.body.userEmail) {
-    console.log(req.session.user.Email);
     
     Model.Userdetails.findOne({
-      'email': req.session.user.Email
+      'email': req.body.userEmail
      }, (err, user) => {
           if (err) {
         console.log("Error while creating connection");
@@ -103,7 +102,7 @@ app.post("/updateprofile", (req, res) => {
   if (req.body.userEmail) {
 
     Model.Userdetails.findOne({
-      'Username': req.body.userName
+      'username': req.body.userName
     }, (err, user) => {
 
       if (err) {
@@ -126,7 +125,7 @@ app.post("/updateprofile", (req, res) => {
                 user.last_name = req.body.Lastname;
                 user.zip = req.body.Zip;
                 user.password = req.body.Password;
-                user.city = req.body.City;
+                user.city = req.body.userAddress;
                 user.description = req.body.Description;
                 user.ProfileImage = req.body.userImage;
     
