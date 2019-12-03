@@ -1,4 +1,0 @@
-{
-    "mongoURI" : "mongodb+srv://dharmang:dharmang@test-uolh4.mongodb.net/twitter?retryWrites=true&w=majority",
-    "jwtSecretToken": "dharmang"
-}
