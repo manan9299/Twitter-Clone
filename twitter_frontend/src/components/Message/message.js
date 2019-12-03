@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import {ROOT_URL} from '../../constants/constants';
+
+import defaultValues from "../../constants/defaultValues";
 
 class Messaging extends Component{
     constructor(props) {
@@ -22,7 +23,7 @@ class Messaging extends Component{
             var header = new Headers()
             axios.defaults.withCredentials = true
 
-            axios.get(`${ROOT_URL}/message/${id}/getChats`)
+            axios.get(defaultValues.serverURI + "/message/" + id + "/getChats")
                 .then(result => {
                     if (result.status === 200) {
                         if (result.data.status) {
@@ -35,7 +36,7 @@ class Messaging extends Component{
                 })
         
 
-        axios.get(`${ROOT_URL}/user/${id}`)
+        axios.get(defaultValues.serverURI + "/user/" +id)
             .then(response => {
                 console.log("Response for get user is: ", response.data)
             })
@@ -48,7 +49,7 @@ class Messaging extends Component{
         const id = e.target.id
         axios.defaults.withCredentials = true;
 
-        axios.get(`${ROOT_URL}/message/${id}`)
+        axios.get(defaultValues.serverURI + "/message/" + id)
             .then(response => {
                 if (response.status === 200) {
                     if (response.data.status) {
@@ -66,7 +67,7 @@ class Messaging extends Component{
 
 
     render() {
-        require('../styles/messaging.css');
+        require('../../styles/messaging.css');
 
         let MsgInfo = null;
         let createMsg = null;

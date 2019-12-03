@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import Main from './components/Main';
-import {BrowserRouter} from 'react-router-dom';
 import './App.css';
 import Main from './components/Main';
 import { BrowserRouter, Route, Switch } from "react-router-dom";

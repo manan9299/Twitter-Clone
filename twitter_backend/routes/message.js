@@ -3,9 +3,9 @@ var router = express.Router();
 
 
 
-var UserInfo = require('../models/userInfo')//.users
+var UserInfo = require('../models/user') //.users
 
-var Message = require('../models/message')
+var Message = require('../models/message') // message
 
 
 //New Conversation
