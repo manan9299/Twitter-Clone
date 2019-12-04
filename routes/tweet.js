@@ -57,6 +57,29 @@ exports.updateLikes = (req, res) => {
     }
 };
 
+exports.replyTweet = async (req, res) => {
+
+    const schema = Joi.object({
+        content: Joi.string().trim().min(1).max(280).required()
+    });
+
+    const { error } = schema.validate({ content: req.body.content });
+    if (error) throw err;
+    else {
+        try {
+            let tweetObj = await Tweets.findOne({ username: req.session.ID });
+            tweetObj.tweets.replies.push(req.body.content);
+            tweetObj.save()
+                .then(() => res.status(200).json("Tweet reply saved!"))
+                .catch(err => res.status(400).json(err))
+            console.log(tweetObj);
+        } catch (err) {
+            console.error(err);
+            res.status(500).send("Server Error");
+        }
+    }
+};
+
 exports.getTweets = (req, res) => {
     try {
         Tweets.findOne({ username: req.session.ID }, (err, tweets) => {
