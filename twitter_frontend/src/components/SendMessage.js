@@ -26,21 +26,29 @@ class SendMessage extends Component {
     }
 
     messageUser = (e) => {
-        //e.preventDefault();
+        
+        if (this.state.message != "") {
+            let data = {
+                user: this.props.match.params.id,
+                message: this.state.message
+            }
+            axios.post('/messageUser', data)
+                .then(res => {
+                    console.log(JSON.stringify(res));
+                }).catch((err) => {
+                    console.log(err);
+                });
+            axios.post('/getChat', { user: this.props.match.params.id })
+                .then(res => {
+                    this.setState({ chat: res.data });
+                }).catch((err) => {
+                    console.log(err);
+                });
 
-        let data = {
-            user: this.props.match.params.id,
-            message: this.state.message
+            this.setState({ message: "" });
         }
-
-        axios.post('/messageUser', data)
-            .then(res => {
-                //alert('Message Sent!');
-                console.log(JSON.stringify(res));
-            }).catch((err) => {
-                console.log(err);
-            });
     }
+        
 
     render() {
         return (
