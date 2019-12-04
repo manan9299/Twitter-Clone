@@ -1,123 +1,132 @@
-import React, { Component, useEffect, useState } from "react";
-import Navbar from './navbar';
-import "../css/home.css";
-import {Redirect}  from 'react-router';
-import defaultValues from "../constants/defaultValues";
-import { Col,Row,FormGroup,Form,Label, Input, Card, Button, CardImg, CardTitle, CardText, CardDeck,
-    CardSubtitle, CardBody, Pagination, PaginationItem, PaginationLink
-} from 'reactstrap';
-import Axios from "axios";
-import InfiniteScroll from 'react-infinite-scroller'
+import React, {Component} from 'react';
+import { Form, Button } from 'react-bootstrap';
+import axios from 'axios';
+import cookie from 'react-cookies';
+import {Redirect} from 'react-router';
 
-class Home extends Component{
-    constructor(props){
-        super(props)
-        this.state = {
-            tweetsLoaded: [],
-            tweetsLoadedCnt:0,
-            isLoading: true,
-            cursor: 0
-          };
-          this.getTweets = this.getTweets.bind(this);
-          this.scrollDownEvent = this.scrollDownEvent.bind(this);
-    }
-    
+import PostTweet from './PostTweet';
 
-    componentDidMount(){
-        //this.loadTweets(); 
-        this.getTweets();
+import '../css/App.css';
+
+class Home extends Component {
+
+	constructor(){
+		super();
+		this.state = {
+			dishName : "",
+			toRestaurantList : null,
+			submitMessage : ""
+		}
+	}
+
+	findFood = (event) => {
+		event.preventDefault();
+		let dishName = this.state.dishName;
+
+		let reqData = {
+			dishName : dishName
+		}
+
+		axios.defaults.headers.common['Authorization'] = localStorage.getItem('grubhubUserToken');
+		console.log("Req Data is : " + JSON.stringify(reqData));
+
+		axios.post("http://3.88.210.120:3001/setUserPref", reqData)
+			.then( response => {
+
+                if(response.status == 200){
+					let status = response.data.status;
+					
+                    if (status == 200){
+                        this.setState({
+							toRestaurantList : <Redirect to='/filteredrestaurants' />
+						});
+                    } else {
+                        this.setState({
+							toRestaurantList : <Redirect to='/' />
+						});
+                    }
+                } else {
+                    this.setState({
+						submitMessage : "Could not get a response from the server"
+					});
+                }
+			});
+	}
+
+	dishChangeHandler = (event) => {
+		this.setState({
+			dishName : event.target.value
+		})
+	}
+	
+	render() {
+		// let redirectVar = null;
+		// if(!localStorage.getItem('grubhubUserToken')){
+		// 	redirectVar = <Redirect to= "/buyerlogin"/>
+		// }
         
-    }
-    componentWillMount(){
-        window.addEventListener('scroll',()=>{
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-                console.log("you're at the bottom of the page");
-                //show loading spinner and make fetch request to api
-                this.getTweets();
-             }
-        });
-    }
-    
-    scrollDownEvent(){
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-            console.log("you're at the bottom of the page");
-            //show loading spinner and make fetch request to api
-            this.getTweets();
-         }
-    }
-
-    
-    getTweets(){
-        const data = {
-            start : this.state.tweetsLoadedCnt
-        }
-        console.log(data.start);
-        Axios.get(defaultValues.serverURI+"/users/getAllTweets/"+this.state.tweetsLoadedCnt.toString(),)
-        .then((res)=>{
-            
-            if(res){
-
-                this.setState({
-                    tweetsLoaded : [...this.state.tweetsLoaded,...res.data],
-                    tweetsLoadedCnt : this.state.tweetsLoadedCnt + 10
-                });
-            }   
-        }).catch(err=>{
-            console.error(err);
-            console.log("API not Working");
-        })
-    }
-    render(){
-        const {
-            error,
-            hasMore,
-            isLoading,
-            tweetsLoaded,
-            tweetsLoadedCnt
-        } = this.state;
-
-        return(    
-                <div className="container">
-                    <div>
-                        <Navbar/>
-                    </div>
-                    <div>
-                        <h1>Tweets</h1>
-                        <div className="container" id="user_tweets">
-                        <InfiniteScroll
-                            pageStart={0}
-                            hasMore={true || false}
-                            useWindow={false}
-                            loader={
-                            <div key="loading" className="loader">
-                                Loading ...
-                            </div>
-                            }
-                        >
-                            {tweetsLoaded.map(tweetObj => (
-                                <Card bottom width="100%">
-                                    <CardBody>
-                                    <CardTitle>{tweetObj.username}</CardTitle>
-                                    <CardText></CardText>
-                                    <CardText>
-                                        <small className="text-muted">Last updated 3 mins ago</small>
-                                    </CardText>
-                                    </CardBody>
-                                    <CardImg bottom width="100%"  alt="Card image cap" />
-                                </Card>
-                            ))}
-                
-                        </InfiniteScroll>
+        return(
+			<div>
+                <div className="container-fluid">
+                <div className="row">
+                    <div className="col-md-3">
+                        <div className="card-fluid shadow-sm" id="side-nav">  
+                             <div className="card-body text-left list-group-flush" >
+                             <ul className="navbar-nav">
+                                <li className="nav-item  text-left">
+                                    <a className="nav-link font-weight-bold"  id='neworders' href="/home"  >Home</a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link font-weight-bold" id='preparing'  href="#/explore" >Explore</a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link font-weight-bold" id='pastorders' href="#/Messaging">Messaging</a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link font-weight-bold" id='pastorders' href="/searchUser">Search Users</a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link font-weight-bold" id='pastorders' href="#/List" onClick={this.onPastOrders}>List</a>
+                                </li>
+                                <li className="nav-item">
+                                    <a className="nav-link font-weight-bold" id='pastorders' href="/viewUserTweets">Profile</a>
+                                </li>
+								<li className="nav-item">
+                                    <a className="nav-link font-weight-bold" ><PostTweet /></a>
+                                </li>
+                             </ul>
+                             </div>
                         </div>
-                        
                     </div>
-                     
+                    <div className="col-md-9">
+                        <div className="card-fluid shadow-sm p-3 mb-5 rounded text-left">
+							{/* <PostTweet/> */}
+                        </div>
+                    </div>
                 </div>
-
+            </div>
+            </div>
+            // <div className="offset-sm-4 col-sm-3">
+			// 	{redirectVar}
+			// 	{this.state.toRestaurantList}
+			// 	<Form>
+			// 		<Form.Text>
+			// 			Who delivers in your City?
+			// 		</Form.Text>
+			// 		<Form.Group >
+			// 			<Form.Label>Enter a dish</Form.Label>
+			// 			<Form.Control onChange={this.dishChangeHandler} placeholder='Pizza, Tacos, etc.' className='form-group' type="text" />
+			// 		</Form.Group>
+			// 		<Form.Group>
+			// 			<Button onClick={this.findFood} variant="primary" block>
+			// 				Find Food
+			// 			</Button>
+			// 		</Form.Group>
+			// 	</Form>
+			// </div>
         );
-    }
-
+        
+	}
 }
-
 
 export default Home;

@@ -44,8 +44,16 @@ connectToDataBase();
 
 // Setting the routes
 app.use('/users',require('./routes/api/users'));
+app.use('/tweets',require('./routes/api/tweets'));
+
 //app.use('/tweets',require('./routes/api/tweets'));
 //app.use('/auth',require('./routes/api/auth'));
+
+const { messageUser, viewUsers, getChat } = require('./routes/message');
+app.get('/viewUsers', viewUsers);
+app.post('/getChat', getChat);
+app.post('/messageUser', messageUser);
+
 
 /*#endregion*/
 

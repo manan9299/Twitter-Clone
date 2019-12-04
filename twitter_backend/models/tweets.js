@@ -1,8 +1,3 @@
-/**
- * @author Dharmang Solanki
- * 
- */
-
 const mongoose = require('mongoose');
 
 /**
