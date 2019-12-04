@@ -3,6 +3,7 @@ import { Form, Button } from 'react-bootstrap';
 import axios from 'axios';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import defaultValues from '../constants/defaultValues';
 
 import '../css/App.css';
 
@@ -32,7 +33,7 @@ class Login extends Component {
 			password : this.state.password
 		}
 
-		axios.post('http://localhost:3001/users/login', reqData)
+		axios.post(defaultValues.serverURI + '/users/login', reqData)
 			.then(response => {
 				console.log("response is " + JSON.stringify(response));
 				if (response.status == 200){

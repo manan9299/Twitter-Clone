@@ -3,6 +3,7 @@ import { Form, Button, Table } from 'react-bootstrap';
 import axios from 'axios';
 import cookie from 'react-cookies';
 import {Redirect} from 'react-router';
+import defaultValues from '../constants/defaultValues';
 
 import '../css/App.css';
 
@@ -24,7 +25,7 @@ class UsersList extends Component {
             username : localStorage.getItem("twitterUserSearch")
         }
 
-        axios.post("http://localhost:3001/users/searchUser", reqData)
+        axios.post(defaultValues.serverURI + "/users/searchUser", reqData)
             .then(response => {
                 console.log("Response is : " + JSON.stringify(response, null, 4));
                 let users = response.data.user;

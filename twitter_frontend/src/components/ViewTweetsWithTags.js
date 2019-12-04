@@ -10,6 +10,8 @@ import {Card, CardImg, CardTitle, CardText, CardDeck,
 
 import CommentTweet from './CommentTweet';
 import ViewReplies from './ViewReplies';
+import defaultValues from '../constants/defaultValues';
+
 
 import '../css/App.css';
 
@@ -30,7 +32,7 @@ class ViewTweetsWithTags extends Component {
             hashTag : localStorage.getItem("twitterTagSearch")
         }
 
-        axios.post("http://localhost:3001/tweets/getTweetsWithTag", reqData)
+        axios.post(defaultValues.serverURI + "/tweets/getTweetsWithTag", reqData)
             .then(response => {
                 console.log("Response is : " + JSON.stringify(response, null, 4));
                 // let users = response.data;
