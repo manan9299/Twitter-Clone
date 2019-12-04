@@ -1,5 +1,6 @@
 import React, { Component, useEffect, useState } from "react";
 import Navbar from './navbar';
+import PostTweet from './PostTweet';
 import "../css/home.css";
 import {Link} from 'react-router-dom';
 import defaultValues from "../constants/defaultValues";
@@ -7,7 +8,9 @@ import {Card, Button, CardImg, CardTitle, CardText, CardDeck,
     CardSubtitle, CardBody, Pagination, PaginationItem, PaginationLink
 } from 'reactstrap';
 import Axios from "axios";
-import InfiniteScroll from 'react-infinite-scroller'
+import InfiniteScroll from 'react-infinite-scroller';
+import CommentTweet from './CommentTweet';
+import ViewReplies from './ViewReplies';
 
 class Home extends Component{
     
@@ -53,14 +56,14 @@ class Home extends Component{
         const data = {
             start : this.state.tweetsLoadedCnt
         }
-        console.log(data.start);
+
         
-        Axios.get(defaultValues.serverURI+"/users/batchUser1/getTweets/"+this.state.tweetsLoadedCnt.toString(),)
+        Axios.get(defaultValues.serverURI+"/users/batchUser1/getTweets/"+this.state.tweetsLoadedCnt.toString())
         .then((res)=>{
             console.log(res)
             if(res){
                 this.setState({
-                    tweetsLoaded : [...this.state.tweetsLoaded,...res.data],
+                    tweetsLoaded : [...this.state.tweetsLoaded,...res.data.tweets],
                     tweetsLoadedCnt : this.state.tweetsLoadedCnt + 10
                 });
             }   
@@ -81,9 +84,10 @@ class Home extends Component{
         return(    
                 <div className="container">
                     <div>
-                        <Navbar/>
+                       
                     </div>
                     <div>
+                    <li><a href="#"><PostTweet/></a></li>
                         <h1>Tweets</h1>
                         <div className="container" id="user_tweets">
                         <InfiniteScroll
@@ -97,25 +101,29 @@ class Home extends Component{
                             }
                         >
                             {tweetsLoaded.map(tweetObj => (
-                                <Card id="tweet" bottom width="100%">
+                                <Card id="tweet" bottom >
                                     <CardBody>
-                                    <CardTitle ><Link to="/DisplayProfile" username={this.state.username}>{this.state.username}</Link></CardTitle>
-                                    <CardText>{tweetObj.content}</CardText>
-                                    <CardText>
-                                        <small className="text-muted"></small>
+                                    <CardTitle style={{
+                                        textAlign: 'left',
+                                        fontSize:'25px'}}><Link to="/DisplayProfile" username={this.state.username}>@{this.state.username}</Link></CardTitle>
+                                    <CardText id>{tweetObj.content}</CardText>
+                                    <CardText style={{
+                                        textAlign:'left',
+                                        fontSize:'14px'
+                                    }}>
+                                    <small className="text-muted">{tweetObj.likesCount}</small>
                                     </CardText>
                                     </CardBody>
-                                    <img bottom  src="/images/Madtitan.jpg" width="500" height="300" alt="Card image cap" />
+                                    <img bottom src={tweetObj.image} width="500" height="300" alt="Card image cap" />
+                                    <CommentTweet tweet={tweetObj} username={this.state.username}/>
+                                    <ViewReplies tweet={tweetObj} username={this.state.username}/>
                                 </Card>
                             ))}
                 
                         </InfiniteScroll>
-                        </div>
-                        
-                    </div>
-                     
+                        </div>               
+                    </div>            
                 </div>
-
         );
     }
 

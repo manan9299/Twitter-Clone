@@ -11,6 +11,7 @@ var session = require('express-session');
 const connectToDataBase = require("./config/db");
 const connectToSQL= require("./config/sqlConnection");
 var cookieParser = require('cookie-parser');
+//const { postTweet, updateLikes, getTweets } = require('./routes/tweet');
 var cors = require('cors');
 /* #endregion*/
 
@@ -43,9 +44,17 @@ app.use(session({
 connectToDataBase();
 
 // Setting the routes
-app.use('/users',require('./routes/api/users'));
-//app.use('/tweets',require('./routes/api/tweets'));
-//app.use('/auth',require('./routes/api/auth'));
+app.use('/users',require('./routes/users'));
+app.use('/tweet',require('./routes/tweet'));
+
+//GET API
+
+//POST API
+//app.post('/postTweet', postTweet);
+//app.post('/updateLikes', updateLikes);
+
+
+
 
 /*#endregion*/
 

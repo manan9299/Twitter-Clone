@@ -5,9 +5,10 @@
 'use strict';
 /* #region Import Statements */
 const express = require('express');
-const sqlConnection = require('../../config/sqlConnection');
-const Tweets =require("../../models/tweets");
+const sqlConnection = require('../config/sqlConnection');
+const Tweets = require("../models/tweets");
 const bcrypt = require("bcryptjs");
+const Joi = require('@hapi/joi');
 var { check, validationResult } = require('express-validator');
 //var redis = require('redis');
 /*#endregion*/ 
@@ -17,13 +18,13 @@ redisClient.on('connect', () => {
     console.log("Connected to redis");
 });
 */
-const router = express.Router();
+const app = express.Router();
 
 /**
  * @description This API will create a new Customer profile. 
  * In case if user enters the invalid details, we will send the 400 Bad Request along with the error messages
  */
-router.post('/create-user',[
+app.post('/create-user',[
     check('username',"Please Enter your username").not().isEmpty(),
     check('first_name','Please Enter your First Name').not().isEmpty(),
     check('last_name','Please Enter your Last Name').not().isEmpty(),
@@ -68,37 +69,50 @@ router.post('/create-user',[
        }    
 });
 
-router.post('/tweet',async (req,res)=>{
+app.post('/postTweet',async (req,res)=>{
+    const schema = Joi.object({
+        content: Joi.string().trim().min(1).max(280).required()
+        //imageUrl: Joi.string()....
+    });
 
-        try{
-
+    const { error } = schema.validate({ content: req.body.content });
+    if (error) throw err;
+    else {
+        try {
             let newTweet = {
-                        content : req.body.content,
-                        image: "",
-                        likeCount:0,
-                        replyCount:0,
-                        likedBy:[],
-                        replies:[],
-                        refTweetId : "",
-                        timestamp: Date.now()
-                    };
-    
-            let tweetObj = await Tweets.findOne({username:req.body.username});
-            if(!tweetObj){
-                tweetObj = new Tweets({username:req.body.username,tweets:[]});
-                
+                content: req.body.content,
+                image: req.body.imageUrl,
+                likeCount: 0,
+                replyCount: 0,
+                likedBy: [],
+                replies: [],
+                refTweetId: "",
+                timestamp: Date.now()
+            };
+            //note: req.body.username should be session
+            
+            //let tweetObj = await Tweets.findOne({ username: req.session.ID });
+            let tweetObj = await Tweets.findOne({ username: req.body.username });
+            
+            //if tweet array does not exist for current user, create one
+            if (!tweetObj) {
+
+                //tweetObj = new Tweets({ username: req.session.ID, tweets: [] });
+                tweetObj = new Tweets({ username: req.body.username, tweets: [] });
             }
+            //otherwise save current tweet into existing user's tweet array
             tweetObj.tweets.push(newTweet);
-            tweetObj.save();
-            res.status(200).json(tweetObj);
-        }catch(err){
+            tweetObj.save()
+                .then(() => res.status(200).json("Tweet saved!"))
+                .catch(err => res.status(400).json(err))
+            console.log(tweetObj);
+        } catch (err) {
             console.error(err);
             res.status(500).send("Server Error");
         }
-        
-        });
-
-router.get('/getAllTweets/:start',async (req,res)=>{
+    }
+});
+app.get('/getAllTweets/:start',async (req,res)=>{
     try{
         let startIndex  = parseInt(req.params.start);
         let tweets = await Tweets.find({}).skip(startIndex).limit(10);
@@ -110,14 +124,16 @@ router.get('/getAllTweets/:start',async (req,res)=>{
 });
 
 
-router.get('/:username/getTweets/:start', async (req, res)=>{
+app.get('/:username/getTweets/:start', async (req, res)=>{
 
     try {
         let reqUserName = req.params.username;
         let startIndex = req.params.start
-        let userObj = await Tweets.findOne({ username : reqUserName})
-        let userTweets = await userObj.tweets.slice(startIndex,startIndex+10);
-        res.json(userTweets);
+        let userObj = await Tweets.findOne({ username : reqUserName});
+        let userTweets = userObj.tweets.slice(startIndex,startIndex+10).reverse();
+        //let userTweets = await userObj.tweets.slice(startIndex,startIndex+10);
+        console.log(userTweets);
+        res.json({tweets : userTweets});
 /*
         redisClient.get(userTweets, async (err, tweets) => {
             if (tweets) {
@@ -153,7 +169,7 @@ router.get('/:username/getTweets/:start', async (req, res)=>{
 });
         
 
-router.post('/login',[
+app.post('/login',[
     check('email','Please Enter your Email').not().isEmpty(),
     check('email','Your email is valid. Please check the format of your email.').isEmail(),
     check('password','Please password your Email').not().isEmpty(),
@@ -204,4 +220,4 @@ router.post('/login',[
 });
 
 
-module.exports = router;
+module.exports = app;

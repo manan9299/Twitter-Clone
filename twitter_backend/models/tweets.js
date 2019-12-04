@@ -43,4 +43,4 @@ const TweetsSchema = new mongoose.Schema({
 //Here the mongoose.model has two arguments 
 // 1) the name of model 
 // 2) the Schema which will be used 
-module.exports = Tweets = mongoose.model('tweets',TweetsSchema);;
+module.exports = Tweets = mongoose.model('tweets',TweetsSchema);
