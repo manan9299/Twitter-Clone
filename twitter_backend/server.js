@@ -39,11 +39,15 @@ app.use(session({
     resave: false,
     saveUninitialized: true
   }));*/
+  
 // Connect to database
 connectToDataBase();
 
 // Setting the routes
 app.use('/users',require('./routes/api/users'));
+app.use('/tweets',require('./routes/api/tweets'));
+app.use('/message',require('./routes/api/message'));
+
 //app.use('/tweets',require('./routes/api/tweets'));
 //app.use('/auth',require('./routes/api/auth'));
 
