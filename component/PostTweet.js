@@ -6,14 +6,6 @@ import { MDBBtn, MDBIcon } from "mdbreact";
 import axios from 'axios';
 import S3FileUpload from 'react-s3';
 
-const config = {
-    bucketName: 'cmpe273twitterbucket',
-    dirName: 'images',
-    region: 'us-east-1',
-    accessKeyId: 'AKIAJ5WQKY6HZL23TEHA',
-    secretAccessKey: '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'
-}
-
 const styles = {
     fontFamily: 'sans-serif',
     textAlign: 'center',
