@@ -11,7 +11,7 @@
     "body-parser": "^1.18.3",
     "chai": "^4.2.0",
     "chai-http": "^4.3.0",
-    "config": "^3.2.3",
+    "config": "^3.3.8",
     "cookie-parser": "^1.4.3",
     "cors": "^2.8.5",
     "ejs": "^2.6.1",
